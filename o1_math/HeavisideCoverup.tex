@@ -1,0 +1,899 @@
+\documentclass{article}
+\let\chapter\section
+\def\df{\bfseries}
+\def\dd{\displaystyle}
+\def\Ll{{\cal L}}
+\def\DF#1{{\df #1}\XX{#1}}
+\def\BF#1{{\df #1}}
+\def\XX{}
+\def\rf#1{(\ref{#1})}
+\def\EM#1{{\mdseries\itshape #1}}
+\def\Paragraph#1{\paragraph{#1.}}
+\newenvironment{SuperQuote}{\begin{quote}\large\sf}{\end{quote}}
+\newtheorem{Example}{Example}[section]
+\newenvironment{Solution}{\par\noindent{\sffamily\bfseries\upshape Solution}:\small\rm}{\par\medskip}
+\def\rref{\mathop{{\bf rref}}\nolimits}
+\newenvironment{Proof}{\par\noindent{\sffamily\bfseries\upshape
+Proof}:\small\rm}{\par\medskip}
+
+%
+% \begin{topics}{template} ... \end{topics}
+% used like enumerate, itemize, description environments
+% The item[] is never optional!
+%
+\newcommand{\topicslabel}[1]{#1\hfil}
+\makeatletter
+\def\@topics#1#2{% #2=right column template
+    \begin{list}{}{%
+      \let\makelabel\topicslabel
+      \parsep=0.1ex plus 0.1ex minus 0.1ex
+      \parskip=0.1ex
+% Compute size of left column labels from #1 template
+      \settowidth{\labelwidth}{\topicslabel{#1}}%
+      \setlength{\leftmargin}{\labelwidth}%
+      \addtolength{\leftmargin}{\labelsep}%
+% next line indents environment left by 2ex.
+      \advance\leftmargin by 2ex\relax
+% next line indents environment right by 2ex.
+      \advance\rightmargin by 2ex\relax
+% process right column template, which may be null.
+      \settowidth{\itemindent}{#2}%% \itemindent=scratch register
+      \ifdim\itemindent>\z@\relax
+        \addtolength{\itemindent}{\leftmargin}%
+        \addtolength{\itemindent}{\rightmargin}%
+        \addtolength{\itemindent}{-\linewidth}%
+        \ifdim \itemindent<\z@\relax
+        \addtolength{\labelwidth}{-\itemindent}%
+        \addtolength{\leftmargin}{-\itemindent}\fi
+      \fi
+      \itemindent=0ex% reset register
+}
+}
+% required LaTeX2e argument #2=left column template
+% optional LaTeX2e argument #1=right column template
+\newenvironment{topics}[2][]{\@topics{#2}{#1}}{\leftmargin=0in\end{list}}
+%
+\long\def\TopicsRightBox#1{%
+%\parbox[t]{\linewidth}{\sloppy #1}
+\begin{minipage}[t]{\linewidth}{\sloppy #1}\end{minipage}\hfill
+}
+%\long\def\TopicsLeftBox#1{%
+%\DEtrash=\labelwidth
+%\advance\DEtrash by -\labelsep
+%\begin{minipage}[t]{\DEtrash}{\sloppy #1}\end{minipage}\hfill
+%}
+%\long\def\setmatrix#1{\TopicsLeftBox{~\\[-\topskip] #1}}
+\long\def\Writeup#1#2{%
+\item[{\sf #1}]%
+{\sf \TopicsRightBox{#2}}%
+}
+%\def\Dparen#1{\left\Lparen #1\right\Rparen}
+\makeatother
+\begin{document}
+
+%\input{de7-4.tex}
+\section{Heaviside's Method}
+\label{partial-fractions} The method solves an equation like
+$$\Ll(f(t))={\dd\frac{2s}{(s+1)(s^2+1)}}$$
+for the $t$-expression $f(t)=-e^{-t}+\cos t + \sin t$. The details
+in Heaviside's method involve a sequence of easy-to-learn college
+algebra steps. This practical method was popularized by the
+English electrical engineer Oliver Heaviside
+(1850--1925).\XX{Heaviside, Oliver}
+
+More precisely, \DF{Heaviside's method} systematically converts a
+polynomial quotient
+\begin{equation}\label{7-4.eq.rational}
+ \frac{a_0+a_1s+\cdots + a_ns^n}{b_0+b_1s+\cdots+b_ms^m}
+\end{equation}
+into the form $\Ll(f(t))$ for some expression $f(t)$.  It is
+assumed that $a_0,..,a_n,b_0,\ldots,b_m$ are constants and the
+polynomial quotient \rf{7-4.eq.rational} has limit zero at
+$s=\infty$.
+
+\subsection{Partial Fraction Theory}
+\def\thesectiontitle{Partial fractions}
+In college algebra, it is shown that a rational function
+\rf{7-4.eq.rational} can be expressed as the sum of \DF{partial
+fractions}, which are fractions with a constant in the numerator,
+and a denominator having just one root. Such terms have the form
+\begin{equation}\label{7-4.eq.root-s0}
+\frac{A}{(s-s_0)^k}.
+\end{equation}
+The numerator in \rf{7-4.eq.root-s0} is a real or complex constant
+$A$ and the denominator has exactly one root $s=s_0$. The power
+$(s-s_0)^k$ \BF{must divide the denominator} in
+\rf{7-4.eq.rational}.
+
+Assume fraction \rf{7-4.eq.rational} has \BF{real coefficients}.
+If $s_0$ in \rf{7-4.eq.root-s0} is real, then $A$
+is \EM{real}. If $s_0=\alpha+i\beta$ in \rf{7-4.eq.root-s0} is
+\EM{complex}, then $(s-\overline{s_0})^k$ also appears, where
+$\overline{s_0}=\alpha-i\beta$ is the complex conjugate of $s_0$.
+The corresponding terms in \rf{7-4.eq.root-s0} turn out to be complex
+conjugates of one another, which can be combined in terms of \EM{real}
+numbers $B$ and $C$ as
+\begin{equation}\label{7-4.eq.root-alpha-beta}
+\frac{A}{(s-s_0)^k}+\frac{\overline{\!A}}{(s-\overline{s_0})^k}=
+\frac{B+C\,s}{((s-\alpha)^2+\beta^2)^k}\,.
+\end{equation}
+This \BF{real form} is preferred over the complex fractions on the
+left, because Laplace tables typically contain only real formulae.
+
+\Paragraph{Simple Roots} Assume that \rf{7-4.eq.rational} has
+\EM{real coefficients} and the denominator of the fraction
+\rf{7-4.eq.rational} has \DF{distinct real roots} $s_1$, \ldots,
+$s_N$ and \DF{distinct complex roots} $\alpha_1\pm i\beta_1$,
+\ldots, $\alpha_M\pm i\beta_M$. The partial fraction expansion of
+\rf{7-4.eq.rational} is a sum given in terms of \EM{real}
+constants $A_p$, $B_q$, $C_q$ by
+\begin{equation}\label{7-4.eq.simple-roots}
+ \frac{a_0+a_1s+\cdots + a_ns^n}{b_0+b_1s+\cdots+b_ms^m}
+=
+\sum_{p=1}^N
+\frac{A_p}{s-s_p} + \sum_{q=1}^M
+\frac{B_q+C_q(s-\alpha_q)}{(s-\alpha_q)^2+\beta_q^2}\,.
+\end{equation}
+
+
+\Paragraph{Multiple Roots} Assume \rf{7-4.eq.rational} has
+\EM{real coefficients} and the denominator of the fraction
+\rf{7-4.eq.rational} has possibly \DF{multiple roots}. Let $N_p$
+be the multiplicity of real root $s_p$ and let $M_q$ be the
+multiplicity of complex root $\alpha_q+i\beta_q$ ($\beta_q>0$),
+$1\le p \le N$, $1\le q \le M$. The partial fraction expansion of
+\rf{7-4.eq.rational} is given in terms of \EM{real} constants
+$A_{p,k}$, $B_{q,k}$, $C_{q,k}$ by
+\begin{equation}\label{7-4.eq.multiple-roots}
+% \frac{a_0+a_1s+\cdots + a_ns^n}{b_0+b_1s+\cdots+b_ms^m}
+%=
+\sum_{p=1}^N \sum_{1\le k\le N_p}
+\frac{A_{p,k}}{(s-s_p)^k} + \sum_{q=1}^M \sum_{1\le k\le M_q}
+\frac{B_{q,k}+C_{q,k}(s-\alpha_q)}{((s-\alpha_q)^2+\beta_q^2)^k}\,.
+\end{equation}
+\Paragraph{Summary} The theory for simple roots and multiple roots
+can be distilled as follows.
+\begin{SuperQuote}
+A polynomial quotient $p/q$ with limit zero at infinity has a
+unique expansion into partial fractions. A partial fraction is
+either a constant divided by a divisor of $q$ having exactly one
+root, or else a linear function divided by a real divisor of $q$,
+having exactly one complex conjugate pair of roots.
+\end{SuperQuote}
+
+\subsection{A Failsafe Method}
+Consider the expansion in partial fractions
+\begin{equation}\label{7-4.eq.failsafe}
+\frac{s-1}{s(s+1)^2(s^2+1)}=
+\frac{A}{s}+\frac{B}{s+1}+\frac{C}{(s+1)^2}+\frac{Ds+E}{s^2+1}.
+\end{equation}
+The five undetermined real constants $A$ through $E$ are found by
+\BF{clearing the fractions}, that is, multiply
+\rf{7-4.eq.failsafe} by the denominator on the left to obtain the
+polynomial equation
+\begin{equation}\label{7-4.eq.failsafe-cleared}
+\begin{array}{lcl} s-1 &=&
+{A}{(s+1)^2(s^2+1)}+{B}{s(s+1)(s^2+1)}
+\\
+&& +{C}{s(s^2+1)}+(Ds+E){s(s+1)^2}.
+\end{array}
+\end{equation}
+Next, five different values of $s$ are substituted into
+\rf{7-4.eq.failsafe-cleared} to obtain equations for the five
+unknowns $A$ through $E$. We always use the \DF{roots of  the
+denominator} to start: $s=0$, $s=-1$, $s=i$, $s=-i$ are the roots
+of $s(s+1)^2(s^2+1)=0$ . Each complex root results in two
+equations, by taking real and imaginary parts. The complex
+conjugate root $s=-i$ is not used, because it duplicates equations
+already obtained from $s=i$. The three roots $s=0$, $s=-1$, $s=i$
+give only four equations, so we invent another value $s=1$ to get
+the fifth equation:
+\begin{equation}\label{7-4.eq.failsafe-substituted}
+\begin{array}{rcll}
+%s-1 &=& {A}{(s+1)^2(s^2+1)}+{B}{s(s+1)(s^2+1)}+{C}{s(s^2+1)}+(Ds+E){s(s+1)^2}.
+
+-1 &=& {A} & (s=0)
+\\
+-2 &=& -2{C}-2(-D+E) & (s=-1)
+\\
+i-1 &=& (Di+E){i(i+1)^2} & (s=i)
+\\
+ 0 &=& 8A + 4B + 2C+4(D+E) & (s=1)
+ \end{array}
+\end{equation}
+Because $D$ and $E$ are real, the complex equation ($s=i$) becomes
+two equations, as follows.
+\def\AA{XX{$i-1=(Di+E)i(i^2+2i+1)$} }
+\def\BB{{Equate imaginary parts.}}
+\begin{topics}[\BB]{\AA}
+ \Writeup {$i-1=(Di+E)i(i^2+2i+1)$} {Expand power.}
+
+ \Writeup {$i-1=-2Di-2E$} {Simplify using $i^2=-1$.}
+
+ \Writeup {$1= -2D$} {Equate imaginary parts.}
+
+ \Writeup {$-1=-2E$} {Equate real parts.}
+\end{topics}
+
+Solving the $5\times 5$ system, the answers are $A=-1$, $B=2$,
+$C=0$, $D=-1/2$, $E= 1/2$.
+
+% eqs:= -1 = A,
+% -1-1 = -2*C-2*(-D+e),
+% 1=-2*D, -1=-2*e, 0 = 8*A + 4*B + 2*C+4*(D+e);
+% solve({eqs},{A,B,C,D,e});
+%
+
+
+
+
+\subsection{Heaviside's Coverup Method}
+The method applies only to the case of distinct roots of the
+denominator in \rf{7-4.eq.rational}. Extensions to multiple-root
+cases can be made; see page \pageref{7-4.heaviside-multiple}.
+
+
+To illustrate Oliver Heaviside's ideas, consider the problem details
+\def\AA{\fbox{$\scriptstyle\phantom{\scriptstyle (s+1)}$}}%
+\def\CC{\fbox{$(s+1)$}}%
+\begin{eqnarray}
+\label{7-4.eq.three-roots}
+\dd\frac{2s+1}{s(s-1)(s+1)} &=&\dd \frac{A}{s}+\frac{B}{s-1}+\frac{C}{s+1}
+\\
+\nonumber
+\phantom{\dd\frac{2s+1}{s(s-1)(s+1)}} &=&\dd \Ll(A)+\Ll(Be^t)+\Ll(Ce^{-t}) \\
+\nonumber
+\phantom{\dd\frac{2s+1}{s(s-1)(s+1)}} &=&\dd \Ll(A+Be^t+Ce^{-t})
+\end{eqnarray}
+The first line \rf{7-4.eq.three-roots} uses college algebra
+partial fractions. The second and third lines use the basic
+Laplace table and linearity of $\Ll$.
+
+\Paragraph[mysterious details]{Mysterious Details} Oliver
+Heaviside proposed to find in \rf{7-4.eq.three-roots} the constant
+$C=-\frac12$ by a \BF{cover--up method}:\XX{cover-up method}
+$$\left.\frac{2s+1}{s(s-1)\AA}\right|_{\fbox{$\scriptstyle s+1$}=0} =
+\frac{C}{\AA}.$$ The \EM{instructions} are to cover--up the
+matching factors $(s+1)$ on the left and right with box \AA{}
+(Heaviside used two fingertips), then evaluate on the left at the
+\EM{root} $s$ which causes the box contents to be zero. The other
+terms on the right are replaced by zero.
+
+To justify Heaviside's cover--up method,  \BF{clear the fraction}
+$C/(s+1)$, that is,  multiply \rf{7-4.eq.three-roots} by the
+denominator \fbox{$s+1$} of the partial fraction $C/(s+1)$ to
+obtain the \EM{partially-cleared fraction relation}
+\def\AA{\fbox{$(s+1)$}}
+$$\frac{(2s+1)\AA}{s(s-1)\AA} =
+\frac{A\AA}{s}+\frac{B\AA}{s-1}+\frac{C\AA}{\phantom{C}\AA}.$$ Set
+$\AA=0$ in the display. Cancellations left and right plus
+annihilation of two terms on the right gives Heaviside's
+prescription
+$$\left.\frac{2s+1}{s(s-1)}\right|_{s+1=0} =
+C.$$
+The factor $(s+1)$ in \rf{7-4.eq.three-roots} is by no means special:
+the same procedure applies to find $A$ and $B$. The method works for
+denominators with simple roots, that is, no repeated roots are allowed.
+
+Heaviside's method in words:
+\begin{SuperQuote}
+To determine $A$ in a given partial fraction $ \frac{A}{s-s_0}$,
+multiply the relation by $(s-s_0)$, which partially clears the
+fraction. Substitute for $s$ via equation $s-s_0=0$.
+\end{SuperQuote}
+
+
+\Paragraph{Extension to Multiple Roots}
+\label{7-4.heaviside-multiple}
+Heaviside's method can be extended to the case of repeated
+roots. The basic idea is to \EM{factor--out the repeats}. To illustrate,
+consider the partial fraction expansion details
+
+\def\AA{XX$\dd\phantom{\dd R}=
+\frac{1}{(s+1)^2}+\frac{-1}{s+1}+\frac{1}{s+2}$}
+\def\BB{}
+\begin{topics}[\BB]{\AA}
+\Writeup
+{$\dd R=\frac{1}{(s+1)^2(s+2)}$}
+{A sample rational function having repeated roots.}
+\Writeup
+{$\dd\phantom{\dd R}=\frac{1}{s+1}
+\left(\frac{1}{(s+1)(s+2)}\right)$}
+{Factor--out the repeats.}
+
+\Writeup
+{$\dd\phantom{\dd R}=\frac{1}{s+1}
+\left(\frac{1}{s+1}+\frac{-1}{s+2}
+\right)$}
+{Apply the cover--up method to the simple root fraction.}
+
+\Writeup
+{$\dd\phantom{\dd R}=
+\frac{1}{(s+1)^2}+\frac{-1}{(s+1)(s+2)}
+$}
+{Multiply.}
+
+\Writeup
+{$\dd\phantom{\dd R}=
+\frac{1}{(s+1)^2}+\frac{-1}{s+1}+\frac{1}{s+2}
+$}
+{Apply the cover--up method to the last fraction on the right.}
+
+\end{topics}
+
+Terms with only one root in the denominator are already partial
+fractions. Thus the work centers on expansion of quotients in which the
+denominator has two or more roots.
+
+\Paragraph{Special Methods}
+Heaviside's method has a useful extension for the case of roots of
+multiplicity two. To illustrate, consider these details:
+
+\def\AA{XX$\dd\phantom{\dd R}=\frac{-1}{s+1}+\frac{1}{(s+1)^2}+\frac{1}{s+2}$}
+\def\BB{}
+\begin{topics}[\BB]{\AA}
+\Writeup {$\dd R=\frac{1}{(s+1)^2(s+2)}$} {\fbox{1}~ A fraction
+with multiple roots.}
+
+\Writeup {$\dd\phantom{\dd
+R}=\frac{A}{s+1}+\frac{B}{(s+1)^2}+\frac{C}{s+2}$} {\fbox{2}~ See
+equation \rf{7-4.eq.multiple-roots}, page
+\pageref{7-4.eq.multiple-roots}.}
+
+\Writeup {$\dd\phantom{\dd
+R}=\frac{A}{s+1}+\frac{1}{(s+1)^2}+\frac{1}{s+2}$} {\fbox{3}~ Find
+$B$ and $C$ by Heaviside's cover--up method.}
+
+\Writeup {$\dd\phantom{\dd
+R}=\frac{-1}{s+1}+\frac{1}{(s+1)^2}+\frac{1}{s+2}$} {\fbox{4}~
+Details below.}
+
+\end{topics}
+
+We discuss \fbox{4} details. Multiply the equation \fbox{1} =
+\fbox{2} by $s+1$ to partially clear fractions, the same step as
+the cover-up method:
+$$
+ \frac{1}{(s+1)(s+2)}=A+\frac{B}{s+1}+\frac{C(s+1)}{s+2}.
+$$
+We don't substitute $s+1=0$, because it gives infinity for the
+second term. Instead, set $s=\infty$ to get the equation $0=A+C$.
+Because $C=1$ from \fbox{3}, then $A=-1$.
+
+The illustration works for one root of multiplicity two, because
+$s=\infty$ will resolve the coefficient not found by the cover--up
+method.
+
+In general, if the denominator in \rf{7-4.eq.rational} has a root $s_0$
+of multiplicity $k$, then the partial fraction expansion contains terms
+$$\frac{A_1}{s-s_0}+ \frac{A_2}{(s-s_0)^2}+ \cdots +
+\frac{A_k}{(s-s_0)^k}.$$
+Heaviside's cover--up method directly finds $A_k$, but not $A_1$ to
+$A_{k-1}$.
+
+\Paragraph{Cover-up Method and Complex Numbers} Consider the
+partial fraction expansion
+$$
+ \frac{10}{(s+1)(s^2+9)}=\frac{A}{s+1}+\frac{Bs+C}{s^2+9}.
+$$
+The symbols $A$, $B$, $C$ are real. The value of $A$ can be found
+directly by the cover-up method, giving $A=1$. To find $B$ and
+$C$, multiply the fraction expansion by $s^2+9$, in order to
+partially clear fractions, then formally set $s^2+9=0$ to obtain
+the two equations
+$$
+ \frac{10}{s+1}=Bs+C,\quad s^2+9=0.
+$$
+The method applies the identical idea used for one real root. By
+clearing fractions in the first, the equations become
+$$
+ 10=Bs^2+Cs+Bs+C,\quad s^2+9=0.
+$$
+Substitute $s^2=-9$ into the first equation to give the linear
+equation
+$$
+ 10=(-9B+C)+(B+C)s.
+$$
+Because this linear equation has two complex roots $s=\pm 3i$,
+then real constants $B$, $C$ satisfy the $2\times 2$ system
+$$
+ \begin{array}{rcrcr}
+ -9B&+&C &=& 10, \\
+   B&+&C &=& 0.
+ \end{array}
+$$
+Solving gives $B=-1$, $C=1$.
+
+The same method applies especially to fractions with $3$-term
+denominators, like $s^2+s+1$. The only change made in the details
+is the replacement $s^2\to -s-1$. By repeated application of
+$s^2=-s-1$, the first equation can be distilled into one linear
+equation in $s$ with two roots. As before, a $2\times 2$ system
+results.
+
+\subsection{Examples}
+
+\begin{Example}[Partial Fractions I]\label{7-4.ex.partial-fractions-I}
+Show the details of the partial fraction expansion
+$$\dd  \frac{s^3+2s^2+2s+5}
+        {(s-1)(s^2+4)(s^2+2s+2)}
+= \dd   \frac{2/5}{s-1}+\frac{1/2}{{s}^{2}+4}
+  -\frac{1}{10}{\frac {7+4\,s}{{s}^{2}+2\,s+2}}.
+$$
+\end{Example}
+\begin{Solution} ~\newline
+\BF{Background}. The problem originates as equality
+\fbox{5}=\fbox{6} in the sequence of Example
+\ref{7-4.ex.third-order-IVP}, page
+\pageref{7-4.ex.third-order-IVP}, which solves for $x(t)$ using
+the method of partial fractions:
+$$\begin{array}{ll}
+\fbox{5}\quad& \dd  \Ll(x)= \frac{s^3+2s^2+2s+5}
+        {(s-1)(s^2+4)(s^2+2s+2)}
+        \\[2ex]
+\fbox{6}\quad& \dd  \phantom{\Ll(x)}=
+\frac{2/5}{s-1}+\frac{1/2}{{s}^{2}+4}
+  -\frac{1}{10}{\frac {7+4\,s}{{s}^{2}+2\,s+2}}
+\end{array}
+$$
+
+\BF{College algebra detail}. College algebra partial fractions
+theory says that there exist real constants $A$, $B$, $C$, $D$,
+$E$ satisfying the identity
+$$\dd  \frac{s^3+2s^2+2s+5}
+        {(s-1)(s^2+4)(s^2+2s+2)}
+= \dd   \frac{A}{s-1}+\frac{B+Cs}{{s}^{2}+4}
+  +{\frac {D+Es}{{s}^{2}+2\,s+2}}.
+$$
+As explained on page \pageref{7-4.eq.root-alpha-beta}, the complex
+conjugate roots $\pm 2i$ and $-1\pm i$ are not represented as
+terms $c/(s-s_0)$, but in the combined real form seen in the above
+display, which is suited for use with Laplace tables.
+
+The \BF{failsafe method} applies to find the constants. In this
+method, the fractions are cleared to obtain the polynomial
+relation
+$$
+\begin{array}{lcl}
+\dd  {s^3+2s^2+2s+5} &=& \dd   {A} {(s^2+4)(s^2+2s+2)} \\
+  & & +\dd {(B+Cs)}{(s-1)(s^2+2s+2)} \\
+  & & +{{(D+Es)}{(s-1)(s^2+4)}}. \end{array}
+$$
+The roots of the denominator ${(s-1)(s^2+4)(s^2+2s+2)}$ to be
+inserted into the previous equation are $s=1$, $s=2i$, $s=-1+i$.
+The conjugate roots $s=-2i$ and $s=-1-i$ are not used. Each
+complex root generates two equations, by equating real and
+imaginary parts, therefore there will be $5$ equations in $5$
+unknowns. Substitution of $s=1$, $s=2i$, $s=-1+i$ gives three
+equations
+$$
+ \begin{array}{lcrcl}
+ s=1 & \quad & 10 &=& 25A, \\
+ s=2i & \quad & -4i-3 &=& (B+2iC)(2i-1)(-4+4i+2), \\
+ s=-1+i & \quad & 5 &=& (D-E+Ei)(-2+i)(2-2(-1+i)).
+ \end{array}
+$$
+Writing each expanded complex equation in terms of its real and
+imaginary parts, explained in detail below, gives $5$ equations
+$$
+ \begin{array}{lcrcrcr}
+ s=1 & \quad & 2 &=& 5A, & & \\
+ s=2i & \quad & -3 &=& -6B\phantom{,}&+&16C, \\
+ s=2i & \quad & -4 &=& -8B\phantom{,}&-&12C, \\
+ s=-1+i & \quad & 5 &=& -6D\phantom{,}&-&2E, \\
+ s=-1+i & \quad & 0 &=& 8D\phantom{,}&-&14E.
+ \end{array}
+$$
+The equations are solved to give $A=2/5$, $B=1/2$, $C=0$,
+$D=-7/10$, $E=-2/5$ (details for $B$, $C$ below).
+
+\BF{Complex equation to two real equations}. It is an algebraic
+mystery how exactly the complex equation
+$$
+ -4i-3 = (B+2iC)(2i-1)(-4+4i+2)
+$$
+gets converted into two real equations. The process is explained
+here.
+
+First, the complex equation is expanded, as though it is a
+polynomial in variable $i$, to give the steps
+$$
+ \begin{array}{lcll}
+-4i-3 &=& (B+2iC)(2i-1)(-2+4i)   & ~\mbox{}
+      \\
+      &=& (B+2iC)(-4i+2+8i^2-4i) & ~\mbox{Expand.}
+      \\
+      &=& (B+2iC)(-6-8i)         & ~\mbox{Use $i^2=-1$.}
+      \\
+      &=& -6B-12iC-8Bi+16C       & ~\mbox{Expand, use $i^2=-1$.}
+      \\
+      &=& (-6B+16C)+(-8B-12C)i   & ~\mbox{Convert to form $x+yi$.}
+\end{array}
+$$
+Next, the two sides are compared. Because $B$ and $C$ are real,
+then the real part of the right side is $(-6B+16C)$ and the
+imaginary part of the right side is $(-8B-12C)$. Equating matching
+parts on each side gives the equations
+$$
+\begin{array}{lcl}
+ -6B+16C &=& -3, \\
+ -8B-12C &=& -4,
+ \end{array}
+$$
+which is a $2\times 2$ linear system for the unknowns $B$, $C$.
+
+\BF{Solving the $2\times 2$ system}. Such a system with a unique
+solution can be solved by Cramer's rule, matrix inversion or
+elimination. The answer: $B=1/2$, $C=0$.
+
+The easiest method turns out to be elimination. Multiply the first
+equation by $4$ and the second equation by $3$, then subtract to
+obtain $C=0$. Then the first equation is $-6B+0=-3$, implying
+$B=1/2$.
+
+\end{Solution}
+
+\begin{Example}[Partial Fractions II]\label{7-4.ex.partial-fractions-II}
+Verify the partial fraction expansion
+$$
+ \begin{array}{lcl}
+ \dd {\frac {{s}^{5}+8\,{s}^{4}+23\,{s}^{3}+37\,{s}^{2}+29\,s+10}{\left (s+
+ 1\right )^{2}\left ({s}^{2}+s+1\right )^{2}}} &=&
+ \dd\frac{1}{s+1} +\frac{2}{(s+1)^{2}} \\[2ex]
+ & & \dd +\frac{3}{{s}^{2}+s +1} \\[2ex] & & \dd +{\frac {4+5\,s}{({s}^{2}+s+1)^{2}}}
+ \end{array}
+$$
+\end{Example}
+\begin{Solution} ~\newline
+Basic partial fraction theory implies that there are real
+constants $a$, $b$, $c$, $d$, $e$, $f$ satisfying the equation
+\begin{equation}\label{7.4.ex.pf-equ}
+ \begin{array}{lcl}
+ \dd {\frac {{s}^{5}+8\,{s}^{4}+23\,{s}^{3}+37\,{s}^{2}+29\,s+10}{\left (s+
+ 1\right )^{2}\left ({s}^{2}+s+1\right )^{2}}} &=&
+ \dd\frac{a}{s+1}
+ +\frac{b}{(s+1)^{2}}\\ [2ex]
+ && \dd +\frac{c+ds}{{s}^{2}+s +1}+{\frac {e+f\,s}{({s}^{2}+s+1)^{2}}}
+ \end{array}
+\end{equation}
+The \BF{failsafe} method applies to clear fractions and replace
+the fractional equation by the polynomial relation
+$$
+ \begin{array}{lcl}
+ \dd {s}^{5}+8\,{s}^{4}+23\,{s}^{3}+37\,{s}^{2}+29\,s+10 &=&
+ \dd a(s+1)({s}^{2}+s+1)^{2} \\
+ & & +b({s}^{2}+s+1)^{2}\\
+ && \dd +(c+ds)({s}^{2}+s +1)(s+1)^2 \\
+ &&+ (e+f\,s)(s+1)^2
+ \end{array}
+$$
+However, the prognosis for the resultant algebra is grime: only
+three of the six required equations can be obtained by
+substitution of the roots ($s=-1$, $s=-1/2+i\sqrt3/2$) of the
+denominator. We abandon the idea, because of the complexity of the
+$6\times 6$ system of linear equations required to solve for $a$
+through $f$.
+
+Instead, the fraction on the left of \rf{7.4.ex.pf-equ} is written
+with repeated roots factored out, as follows:
+$$
+  \begin{array}{l}
+  \frac{1}{(s+1)(s^2+s+1)}\left(\frac{p(x)}{(s+1)(s^2+s+1)}\right),\\
+  [2ex]
+  p(x)={s}^{5}+8\,{s}^{4}+23\,{s}^{3}+37\,{s}^{2}+29\,s+10.
+  \end{array}\dd
+$$
+Long division gives the formula
+$$
+ \frac{p(x)}{(s+1)(s^2+s+1)} = s^2+6s+9.
+$$
+Therefore, the fraction on the left of \rf{7.4.ex.pf-equ} can be
+written as $$
+ \frac{p(x)}{(s+1)^2(s^2+s+1)^2} = \frac{(s+3)^2}{(s+1)(s^2+s+1)}.
+$$
+
+\end{Solution}
+
+\begin{Example}[Third Order Initial Value Problem]\label{7-4.ex.third-order-IVP}
+Solve the third order initial value problem
+ $$\begin{array}{l}
+ x''' - x'' + 4x' - 4x = 5 e^{-t}\sin t, \\
+ x (0) = 0,\quad x' (0) =x''( 0) = 1. \end{array}
+$$
+\end{Example}
+\begin{Solution} ~\newline
+The answer is
+%$$x(t)=\frac25{e^{t}}-\frac25{e^{-t}}\cos(t)-\frac{3}{10}{e^{-t}}\sin(t)+\frac14\sin
+%(2\,t)$$
+$$
+ x(t)=  \frac25 e^t+\frac{1}{4}\sin 2t
+      - \frac{3}{10}e^{-t}\sin t - \frac{2}{5}e^{-t}\cos t .
+$$
+\BF{Method}. Apply $\Ll$ to the differential equation. In steps
+\fbox{1} to \fbox{3} the Laplace integral of $x(t)$ is isolated,
+by applying linearity of $\Ll$, integration by parts
+$\Ll(f')=s\Ll(f)-f(0)$ and the basic Laplace table.
+\def\AA{XX{$\dd   \phantom{\Ll(x)}=  \frac{2/5}{s-1}+\frac{1/2}{{s}^{2}+4}-
+{\frac{3/10}{(s+1)^2+1}} - {\frac {(2/5)(s+1)}{(s+1)^2+1}}$}}
+\def\BB{}
+\begin{topics}[\BB]{\AA}
+ \Writeup
+ {$\Ll(x''')-\Ll(x'')+4\Ll(x')-4\Ll(x)=5\Ll(e^{-t}\sin t)$}
+ {\fbox{1}}
+
+ \Writeup
+ {$\begin{array}{@{}lcl}\dd (s^3\Ll(x)-s-1)-(s^2\Ll(x)-1)\\
+                   \dd +4(s\Ll(x))-4\Ll(x) &=&\dd \frac{5}{(s+1)^2+1}
+ \end{array}$}
+ {\fbox{2}}
+
+ \Writeup
+ {$\dd  (s^3-s^2+4s-4)\Ll(x)=5\frac{1}{(s+1)^2+1} + s$}
+ {\fbox{3}}
+ \end{topics}
+Steps \fbox{5} and \fbox{6} use the college algebra theory of
+partial fractions, the details of which appear in Example
+\ref{7-4.ex.partial-fractions-I}, page
+\pageref{7-4.ex.partial-fractions-I}. Steps \fbox{7} and \fbox{8}
+write the partial fraction expansion in terms of Laplace table
+entries. Step \fbox{9} converts the $s$-expressions, which are
+basic Laplace table entries, into Laplace integral expressions.
+Algebraically, we replace $s$-expressions by expressions in
+symbols $\Ll$ and $t$.
+
+ \begin{topics}[\BB]{\AA}
+ \Writeup
+ {$\dd  \Ll(x)=\frac{\frac{5}{(s+1)^2+1} + s}{s^3-s^2+4s-4}$}
+ {\fbox{4}}
+
+ \Writeup
+ {$\dd  \phantom{\Ll(x)}= \frac{s^3+2s^2+2s+5}{(s-1)(s^2+4)(s^2+2s+2)}$}
+ {\fbox{5}}
+
+ \Writeup
+ {$ \dd  \phantom{\Ll(x)}=
+\frac{2/5}{s-1}+\frac{1/2}{{s}^{2}+4}-1/10\,{\frac
+{7+4\,s}{{s}^{2}+2\,s+2}}$}
+ {\fbox{6}}
+
+ \Writeup
+ {$\dd   \phantom{\Ll(x)}=  \frac{2/5}{s-1}+\frac{1/2}{{s}^{2}+4}-1/10\,
+{\frac{3+4(s+1)}{(s+1)^2+1}}$}
+ {\fbox{7}}
+
+ \Writeup
+ {$\dd   \phantom{\Ll(x)}=  \frac{2/5}{s-1}+\frac{1/2}{{s}^{2}+4}-
+{\frac{3/10}{(s+1)^2+1}} - {\frac {(2/5)(s+1)}{(s+1)^2+1}}$}
+ {\fbox{8}}
+
+ \Writeup
+ {$\dd   \phantom{\Ll(x)}=  \Ll\left(\frac25e^t+\frac{1}{4}\sin 2t-
+\frac{3}{10}e^{-t}\sin t - \frac{2}{5}e^{-t}\cos t\right)$}
+ {\fbox{9}}
+\end{topics}
+The last step \fbox{10} applies Lerch's cancellation theorem to
+the equation \fbox{4}=\fbox{9}.
+
+\begin{topics}[\BB]{\AA}
+ \Writeup
+ {$\dd   x(t)=  \frac25 e^t+\frac{1}{4}\sin 2t- \frac{3}{10}e^{-t}\sin t - \frac{2}{5}e^{-t}\cos t$}
+ {\fbox{10}}
+
+\end{topics}
+
+
+\end{Solution}
+
+\begin{Example}[Second Order System]\label{7-4.ex.second-order-system-IVP}
+Solve for $x(t)$ and $y(t)$ in the $2$nd order system of linear
+differential equations
+$$\begin{array}{ll}
+2 x'' - x' + 9 x - y'' - y' - 3 y = 0, &   x(0) = x'(0) = 1, \\
+2 '' + x' + 7 x -  y''+ y' - 5 y = 0,  &  y(0) = y'(0) =0.
+\end{array}
+$$
+\end{Example}
+\begin{Solution}
+The answer is
+$$\begin{array}{l}
+\dd x(t)=\frac13{e
+^{t}}+\frac23\cos(2\,t)+\frac13\sin(2\,t), \\[2ex]
+\dd y(t)=\frac23{e^{t}}-\frac23\cos(2\,t)-\frac13\sin(2\,t).
+\end{array}
+$$
+{\bf Transform}. The intent of steps \fbox{1} and \fbox{2} is to
+transform the initial value problem into two equations in two
+unknowns. Used repeatedly in \fbox{1} is integration by parts
+$\Ll(f')=s\Ll(f)-f(0)$. No Laplace tables were used. In \fbox{2}
+the substitutions $x_1=\Ll(x)$, $x_2=\Ll(y)$ are made to produce
+two equations in the two unknowns $x_1$, $x_2$.
+
+\def\AA{XX{$\dd\begin{array}{rcrcr}
+ (2s^2-s+9)x_1 &+& (-s^2-s-3)x_2 &=& 1+2s,\\
+ (2s^2+s+7)x_1 &+& (-s^2+s-5)x_2 &=& 3+2s.
+ \end{array}
+ $}}
+\def\BB{{\fbox{2}}}
+\begin{topics}[\BB]{\AA}
+ \Writeup
+ {$\begin{array}{l} (2s^2-s+9)\Ll(x) + (-s^2-s-3)\Ll(y)=1+2s,
+ \\
+ (2s^2+s+7)\Ll(x)+(-s^2+s-5)\Ll(y)=3+2s,
+ \end{array}
+ $}
+ {\fbox{1}}
+
+\Writeup
+ {$\dd\begin{array}{rcrcr}
+ (2s^2-s+9)x_1 &+& (-s^2-s-3)x_2 &=& 1+2s,\\
+ (2s^2+s+7)x_1 &+& (-s^2+s-5)x_2 &=& 3+2s.
+ \end{array}
+ $}
+ {\fbox{2}}
+
+\end{topics}
+
+Step \fbox{3} uses Cramer's rule to compute the answers $x_1$,
+$x_2$ to the equations $ax_1+bx_2=e$, $cx_1+dx_2=f$ as the
+determinant fractions
+ $$
+ \def\AA{\left|\begin{array}{ll} a& b\\ c& d\end{array}\right|}
+ \def\BB{\left|\begin{array}{ll} e& b\\ f& d\end{array}\right|}
+ \def\CC{\left|\begin{array}{ll} a& e\\ c& f\end{array}\right|}
+ x_1=\dd\frac{\BB}{\AA},\quad x_2=\dd\frac{\CC}{\AA}.
+$$
+The variable names $x_1$, $x_2$ stand for the Laplace integrals of
+the unknowns $x(t)$, $y(t)$, respectively. The answers, following
+a calculation:
+
+\def\AA{XX{$\left\{
+ \begin{array}{l}
+ \dd x_1=\frac{1/3}{s-1}+\frac23\,\frac
+ {s}{{s}^{2}+4}+\frac13\,\frac {2}{{s}^{2}+4},
+ \\[2ex]
+ \dd x_2=\frac{2/3}{s-1}-\frac{2}{3}\frac
+ {s}{{s}^{2}+4}-\frac{1}{3}\frac {2}{{s}^{2}+4},
+ \end{array}\right.
+ $}}
+\begin{topics}[\BB]{\AA}
+ \Writeup
+ {$\left\{
+ \begin{array}{l}
+ \dd x_1=\frac{{s}^{2}+2/3}{{s}^{3}-{s}^{2}+4\,s-4},
+ \\[2ex]
+ \dd x_2=\frac{10/3}{{s}^{3}-{s}^{2}+4\,s-4}.
+ \end{array}\right.
+ $}
+ {\fbox{3}}
+ \end{topics}
+Step \fbox{4} writes each fraction resulting from Cramer's rule as
+a partial fraction expansion suited for reverse Laplace table
+look-up. Step \fbox{5} does the table look-up and prepares for
+step \fbox{6} to apply Lerch's cancellation law, in order to
+display the answers $x(t)$, $y(t)$.
+
+ \begin{topics}[\BB]{\AA}
+ \Writeup
+ {$\left\{
+ \begin{array}{l}
+ \dd x_1=\frac{1/3}{s-1}+\frac23\,\frac
+ {s}{{s}^{2}+4}+\frac13\,\frac {2}{{s}^{2}+4},
+ \\[2ex]
+ \dd x_2=\frac{2/3}{s-1}-\frac{2}{3}\frac
+ {s}{{s}^{2}+4}-\frac{1}{3}\frac {2}{{s}^{2}+4}.
+ \end{array}\right.
+ $}
+ {\fbox{4}}
+
+ \Writeup
+ {$\left\{\begin{array}{l} \dd \Ll(x(t))=\Ll\left(\frac13{e
+ ^{t}}+\frac23\cos(2\,t)+\frac13\sin(2\,t)\right), \\[2ex]
+ \dd
+ \Ll(y(t))=\Ll\left(\frac23{e^{t}}-\frac23\cos(2\,t)-\frac13\sin(2\,t)\right).
+ \end{array}\right.
+ $}
+ {\fbox{5}}
+
+ \Writeup
+ {$\left\{\begin{array}{l} \dd x(t)=\frac13{e
+ ^{t}}+\frac23\cos(2\,t)+\frac13\sin(2\,t), \\[2ex]
+ \dd
+ y(t)=\frac23{e^{t}}-\frac23\cos(2\,t)-\frac13\sin(2\,t).
+ \end{array}\right.
+ $}
+ {\fbox{6}}
+\end{topics}
+
+\BF{Partial fraction details}. We will show how to obtain the
+expansion
+$$
+ \frac{{s}^{2}+2/3}{{s}^{3}-{s}^{2}+4\,s-4} = \frac{1/3}{s-1}+\frac23\,\frac
+ {s}{{s}^{2}+4}+\frac13\,\frac {2}{{s}^{2}+4}.
+$$
+The denominator ${{s}^{3}-{s}^{2}+4\,s-4}$ factors into $s-1$
+times $s^2+4$. Partial fraction theory implies that there is an
+expansion with \EM{real coefficients} $A$, $B$, $C$ of the form
+$$
+ \frac{{s}^{2}+2/3}{(s-1)(s^2+4)} = \frac{A}{s-1}+\frac
+ {Bs+C}{{s}^{2}+4}.
+$$
+We will verify $A=1/3$, $B=2/3$, $C=2/3$. Clear the fractions to
+obtain the polynomial equation
+$$
+ {s}^{2}+2/3 = A(s^2+4)+(Bs+C)(s-1).
+$$
+Instead of using $s=1$ and $s=2i$, which are roots of the
+denominator, we shall use $s=1$, $s=0$, $s=-1$ to get a \EM{real}
+$3\times 3$ system for variables $A$, $B$, $C$:
+$$
+ \begin{array}{lclcl}
+  s=1: &\quad & 1+2/3 &=& A(1+4)+0,\\
+  s=0: &\quad & 0+2/3 &=& A(4) + C(-1), \\
+  s=-1: &\quad & 1+2/3 &=& A(1+4)+(-B+C)(-2).
+ \end{array}
+$$
+Write this system as an augmented matrix $G$ with variables $A$,
+$B$, $C$ assigned to the first three columns of $G$:
+$$
+G=\left(\begin{array}{rrr|r}
+ 5 & 0 & 0 & 5/3 \\
+ 4 & 0 & -1 & 2/3 \\
+ 5 & 2 & -2 & 5/3
+\end{array}\right)
+$$
+Using computer assist, calculate
+%with(linalg):G:=matrix([[5,0,0,5/3],[4,0,-1,2/3],[5,2,-2,5/3]]);
+% rref(G);
+% latex(%);
+%
+
+$$
+ \rref(G)=
+ \left (\begin {array}{ccc|c}
+ 1&0&0&1/3\\
+ 0&1&0&2/3\\
+ 0&0&1&2/3
+ \end {array}\right)
+$$
+Then $A$, $B$, $C$ are the last column entries of $\rref(G)$,
+which verifies the partial fraction expansion.
+
+\BF{Heaviside cover-up detail}. It is possible to rapidly check
+that $A=1/3$ using the cover-up method. Less obvious is that the
+cover-up method also applies to the fraction with complex roots.
+
+The idea is to multiply the fraction decomposition by $s^2+4$ to
+partially clear the fractions and then set $s^2+4=0$. This process
+formally sets $s$ equal to one of the two roots $s=\pm 2i$. We
+avoid complex numbers entirely by solving for $B$, $C$ in the pair
+of equations
+$$ \frac{s^2+2/3}{s-1} = A(0) + (Bs+C),\quad s^2+4=0.$$
+Because $s^2=-4$, the first equality is simplified to
+$\dd\frac{-4+2/3}{s-1}=Bs+C$. Swap sides of the equation, then
+cross-multiply to obtain $Bs^2+Cs-Bs-C=-10/3$ and then use
+$s^2=-4$ again to simplify to $(-B+C)s+(-4B-C)=-10/3$. Because
+this linear equation in variable $s$ has two solutions, then
+$-B+C=0$ and $-4B-C=-10/3$. Solve this $2\times 2$ system by
+elimination to obtain $B=C=2/3$.
+
+We review the algebraic method. First, we found two equations in
+symbols $s$, $B$, $C$. Next, symbol $s$ is eliminated to give two
+equations in symbols $B$, $C$. Finally, the $2\times 2$ system for
+$B$, $C$ is solved.
+
+
+\end{Solution}
+\endinput
+
+> expand((B+2*I*C)*(2*I-1)*(-4+4*I+2));
+> expand((D-EE+EE*I)*(-2+I)*(2-2*(-1+I)));
+> solve({Re(-6*B-8*I*B-12*I*C+16*C+4*I+3)=0,
+         Im(-6*B-8*I*B-12*I*C+16*C+4*I+3)=0},{B,C});
+> assume(DD,real);assume(EE,real);
+>  solve({Re((DD-EE+EE*I)*(-2+I)*(2-2*(-1+I))-5)=0,
+          Im((DD-EE+EE*I)*(-2+I)*(2-2*(-1+I))-5)=0},{DD,EE});
+> solve({-6*DD-2*EE=5,8*DD-14*EE=0},{DD,EE});
+>
+
+
+\end{document}
